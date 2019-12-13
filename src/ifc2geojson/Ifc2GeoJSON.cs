@@ -31,8 +31,6 @@ namespace ifc2geojson
                 Console.WriteLine("description: " + building.BuildingAddress.Description);
                 var storeys = building.BuildingStoreys;
                 var site = ifcProject.Sites.FirstOrDefault();
-                Console.WriteLine("Location: " + site.RefLongitude.Value.AsDouble + ", " + site.RefLatitude.Value.AsDouble);
-                Console.WriteLine("storeys: " + storeys.Count());
                 HandleStoreys(storeys, site.RefLongitude.Value.AsDouble, site.RefLatitude.Value.AsDouble);
             }
         }
@@ -41,7 +39,7 @@ namespace ifc2geojson
         {
             foreach (var storey in storeys)
             {
-                Console.WriteLine(storey.LongName);
+                Console.WriteLine("Processing storey " + storey.LongName);
                 HandleSpaces(storey.Spaces, storey.Name, longitude, latitude);
             }
         }
@@ -71,7 +69,6 @@ namespace ifc2geojson
                 {
                     var outercurve = (IfcPolyline)sweptArea.OuterCurve;
                     var line = outercurve.Points;
-                    Console.WriteLine($"{space.LongName}: Height: {depth} , Points: {line.ToList().Count}");
 
                     var points = new List<IPosition>();
                     foreach (var pnt in line)

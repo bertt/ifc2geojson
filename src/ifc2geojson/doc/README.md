@@ -1,4 +1,5 @@
 # ifc2geojson
+
 Experimental tool for converting IFC model to GeoJSON (per storey)
 
 ## Parameters
@@ -31,10 +32,8 @@ Elapsed: 00:00:01.9402988
 
 ## Dependencies
 
-- SharpGLTF
+- GeoJSON.NET
 
 - XBim.Essentials
-
-- XBim.Geometry (only works on Windows)
 
 - CommandLineParser

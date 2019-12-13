@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ifc2geojson": {
+      "commandName": "Project",
+      "commandLineArgs": "-i spaces_all.ifc"
+    }
+  }
+}

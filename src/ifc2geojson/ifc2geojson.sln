@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29521.150
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ifc2geojson", "ifc2geojson\ifc2geojson.csproj", "{5967EB64-2554-4A82-852D-F67AF509EDAD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5967EB64-2554-4A82-852D-F67AF509EDAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5967EB64-2554-4A82-852D-F67AF509EDAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5967EB64-2554-4A82-852D-F67AF509EDAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5967EB64-2554-4A82-852D-F67AF509EDAD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {166F4CFC-800B-49F6-B465-4E75E524D980}
+	EndGlobalSection
+EndGlobal

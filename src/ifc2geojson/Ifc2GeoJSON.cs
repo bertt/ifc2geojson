@@ -11,6 +11,7 @@ using Xbim.Ifc4.GeometryResource;
 using Xbim.Ifc4.Interfaces;
 using Xbim.Ifc4.Kernel;
 using Xbim.Ifc4.ProfileResource;
+using Xbim.Ifc4.TopologyResource;
 
 namespace ifc2geojson
 {
@@ -28,7 +29,7 @@ namespace ifc2geojson
         {
             foreach (var building in buildings)
             {
-                Console.WriteLine("description: " + building.BuildingAddress.Description);
+                // Console.WriteLine("description: " + building.BuildingAddress.Description);
                 var storeys = building.BuildingStoreys;
                 var site = ifcProject.Sites.FirstOrDefault();
                 HandleStoreys(storeys, site.RefLongitude.Value.AsDouble, site.RefLatitude.Value.AsDouble);
@@ -59,12 +60,57 @@ namespace ifc2geojson
 
         private static void HandleSpace(IIfcSpace space, FeatureCollection features, double longitude, double latitude)
         {
-            var geom = (IfcExtrudedAreaSolid)space.Representation.Representations[0].Items[0];
-            var depth = geom.Depth;
-
-            if (geom.SweptArea is IfcArbitraryClosedProfileDef)
+            var representation = space.Representation.Representations[0].Items[0];
+            if (representation is IfcExtrudedAreaSolid)
             {
-                var sweptArea = (IfcArbitraryClosedProfileDef)geom.SweptArea; 
+                HandleExtrudedAreaSolid((IfcExtrudedAreaSolid)representation, features, longitude, latitude);
+            }
+            else if(representation is IfcFacetedBrep)
+            {
+                HandleFacetedBrep((IfcFacetedBrep)representation, features, longitude, latitude);
+            }
+            // todo: handle IfcPolyline?
+            // todo: handle IfcBooleanClippingResult?
+
+        }
+
+        private static void HandleFacetedBrep(IfcFacetedBrep facetedBrep, FeatureCollection features, double longitude, double latitude)
+        {
+            var outer = facetedBrep.Outer;
+
+            foreach(var face in outer.CfsFaces)
+            {
+                foreach (var bound in face.Bounds)
+                {
+                    var polyloop = (IfcPolyLoop)bound.Bound;
+                    var polygon = polyloop.Polygon;
+
+                    var points = new List<IPosition>();
+
+                    foreach (var pnt in polygon)
+                    {
+                        var newp = AddDelta(longitude, latitude, pnt.X / 1000, pnt.Y / 1000);
+                        points.Add(new Position(newp.y, newp.x));
+
+                    }
+
+                    var featureProperties = new Dictionary<string, object> { };
+                    var ls = new LineString(points);
+                    var feat = new Feature(ls, featureProperties);
+                    features.Features.Add(feat);
+
+                }
+            }
+
+        }
+
+        private static void HandleExtrudedAreaSolid(IfcExtrudedAreaSolid extrudedAreaSolid, FeatureCollection features, double longitude, double latitude)
+        {
+            var depth = extrudedAreaSolid.Depth;
+
+            if (extrudedAreaSolid.SweptArea is IfcArbitraryClosedProfileDef)
+            {
+                var sweptArea = (IfcArbitraryClosedProfileDef)extrudedAreaSolid.SweptArea;
                 if (sweptArea.OuterCurve is IfcPolyline)
                 {
                     var outercurve = (IfcPolyline)sweptArea.OuterCurve;

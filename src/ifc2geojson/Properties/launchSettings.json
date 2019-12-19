@@ -2,7 +2,7 @@
   "profiles": {
     "ifc2geojson": {
       "commandName": "Project",
-      "commandLineArgs": "-i AC20-FZK-Haus.ifc"
+      "commandLineArgs": "-i spaces_all.ifc"
     }
   }
 }

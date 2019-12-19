@@ -64,18 +64,18 @@ namespace ifc2geojson
             var representation = space.Representation.Representations[0].Items[0];
             if (representation is IfcExtrudedAreaSolid)
             {
-                HandleExtrudedAreaSolid((IfcExtrudedAreaSolid)representation, features, longitude, latitude, lengthUnitPower);
+                HandleExtrudedAreaSolid((IfcExtrudedAreaSolid)representation, features, longitude, latitude, lengthUnitPower, space.LongName.Value);
             }
             else if(representation is IfcFacetedBrep)
             {
-                HandleFacetedBrep((IfcFacetedBrep)representation, features, longitude, latitude, lengthUnitPower);
+                HandleFacetedBrep((IfcFacetedBrep)representation, features, longitude, latitude, lengthUnitPower, space.LongName.Value);
             }
             // todo: handle IfcPolyline?
             // todo: handle IfcBooleanClippingResult?
 
         }
 
-        private static void HandleFacetedBrep(IfcFacetedBrep facetedBrep, FeatureCollection features, double longitude, double latitude, double lengthUnitPower)
+        private static void HandleFacetedBrep(IfcFacetedBrep facetedBrep, FeatureCollection features, double longitude, double latitude, double lengthUnitPower, string description)
         {
             var outer = facetedBrep.Outer;
 
@@ -98,13 +98,14 @@ namespace ifc2geojson
                     var featureProperties = new Dictionary<string, object> { };
                     var ls = new LineString(points);
                     var feat = new Feature(ls, featureProperties);
+                    feat.Properties.Add("description", description);
                     features.Features.Add(feat);
 
                 }
             }
         }
 
-        private static void HandleExtrudedAreaSolid(IfcExtrudedAreaSolid extrudedAreaSolid, FeatureCollection features, double longitude, double latitude, double lengthUnitPower)
+        private static void HandleExtrudedAreaSolid(IfcExtrudedAreaSolid extrudedAreaSolid, FeatureCollection features, double longitude, double latitude, double lengthUnitPower, string description)
         {
             var depth = extrudedAreaSolid.Depth;
 
@@ -125,6 +126,7 @@ namespace ifc2geojson
                     var featureProperties = new Dictionary<string, object> { };
                     var ls = new LineString(points);
                     var feat = new Feature(ls, featureProperties);
+                    feat.Properties.Add("description", description);
                     features.Features.Add(feat);
                 }
             }

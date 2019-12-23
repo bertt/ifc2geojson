@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using ifc2geojson.core;
 using System;
 using System.Diagnostics;
 using Xbim.Ifc;
@@ -19,13 +20,15 @@ namespace ifc2geojson
 
                 var model = IfcStore.Open(o.Input);
 
-                Ifc2GeoJSON.Convert(model);
-
+                var project = IfcParser.ParseModel(model);
+                Console.WriteLine(project.Name);
+                var storeys = project.Site.Building.Storeys;
+                foreach(var storey in storeys)
+                {
+                    Console.WriteLine(storey.Name);
+                }
                 stopwatch.Stop();
-                Console.WriteLine("Converting to GeoJSON per storey finished.");
                 Console.WriteLine("Elapsed: " + stopwatch.Elapsed);
-
-
             });
         }
     }

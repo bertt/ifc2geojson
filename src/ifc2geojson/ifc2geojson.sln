@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29521.150
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ifc2geojson", "ifc2geojson\ifc2geojson.csproj", "{5967EB64-2554-4A82-852D-F67AF509EDAD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ifc2geojson", "ifc2geojson.csproj", "{5967EB64-2554-4A82-852D-F67AF509EDAD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ifc2geojson.core", "..\ifc2geojson.core\ifc2geojson.core.csproj", "{7782DA97-0A1E-4C80-8BEA-BC1EDF4D6391}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ifc2geojson.tests", "..\ifc2geojson.tests\ifc2geojson.tests.csproj", "{86F4EE76-0A8C-4832-A0EA-DE625E30C6CA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{5967EB64-2554-4A82-852D-F67AF509EDAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5967EB64-2554-4A82-852D-F67AF509EDAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5967EB64-2554-4A82-852D-F67AF509EDAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7782DA97-0A1E-4C80-8BEA-BC1EDF4D6391}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7782DA97-0A1E-4C80-8BEA-BC1EDF4D6391}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7782DA97-0A1E-4C80-8BEA-BC1EDF4D6391}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7782DA97-0A1E-4C80-8BEA-BC1EDF4D6391}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86F4EE76-0A8C-4832-A0EA-DE625E30C6CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86F4EE76-0A8C-4832-A0EA-DE625E30C6CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86F4EE76-0A8C-4832-A0EA-DE625E30C6CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86F4EE76-0A8C-4832-A0EA-DE625E30C6CA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

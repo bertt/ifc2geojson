@@ -5,7 +5,7 @@ using Xbim.Ifc;
 
 namespace ifc2geojson.tests
 {
-    public class Tests
+    public class IfcHausTests
     {
         IfcStore model;
 
@@ -13,12 +13,6 @@ namespace ifc2geojson.tests
         public void Setup()
         {
             model = IfcStore.Open("AC20-FZK-Haus.ifc");
-        }
-
-        [Test]
-        public void ReadModelTest()
-        {
-            Assert.IsTrue(model != null);
         }
 
         [Test]

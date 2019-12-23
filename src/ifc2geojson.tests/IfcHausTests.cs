@@ -1,5 +1,6 @@
 using ifc2geojson.core;
 using NUnit.Framework;
+using System.Diagnostics;
 using Wkx;
 using Xbim.Ifc;
 
@@ -31,7 +32,6 @@ namespace ifc2geojson.tests
             Assert.IsTrue(project.Site.Building.Storeys.Count == 2);
 
             var erdSurvey = project.Site.Building.Storeys[0];
-            var dachSurvey = project.Site.Building.Storeys[1];
             Assert.IsTrue(erdSurvey.Name == "Erdgeschoss");
             Assert.IsTrue(erdSurvey.Elevation == 0);
             Assert.IsTrue(erdSurvey.GrossFloorArea== 119.824049906);
@@ -39,18 +39,14 @@ namespace ifc2geojson.tests
             Assert.IsTrue(erdSurvey.Spaces[0].Name == "4");
             Assert.IsTrue(erdSurvey.Spaces[0].LongName == "Schlafzimmer");
 
-            Assert.IsTrue(dachSurvey.Name == "Dachgeschoss");
-            Assert.IsTrue(dachSurvey.Elevation == 2.7);
-            Assert.IsTrue(dachSurvey.GrossFloorArea == 121.673906052);
-            Assert.IsTrue(dachSurvey.Spaces.Count == 1);
-            Assert.IsTrue(dachSurvey.Spaces[0].Name == "7");
-            Assert.IsTrue(dachSurvey.Spaces[0].LongName == "Galerie");
-
             var schlafZimmer = erdSurvey.Spaces[0];
-            var geometry = (Polygon)schlafZimmer.Geometry;
-            // todo: is this correct? 24 points? 
-            Assert.IsTrue(geometry.ExteriorRing.Points.Count == 24);
-            // todo: check coordinates
+            var geometry = schlafZimmer.Polygon;
+            Assert.IsTrue(geometry.ExteriorRing.Points.Count == 4);
+            foreach(var p in geometry.ExteriorRing.Points)
+            {
+                Debug.WriteLine($"{p.X}, {p.Y}, {p.Z}");
+            }
+            // todo: handle 4 unique coordinates 
         }
     }
 }

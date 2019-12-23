@@ -80,7 +80,7 @@ namespace ifc2geojson.core
             var space = new Space();
             space.Name = ifcSpace.Name;
             space.LongName = ifcSpace.LongName;
-            space.Geometry = HandleGeometry(ifcSpace, LengthUnitPower, SiteLocation);
+            space.Polygon = HandleGeometry(ifcSpace, LengthUnitPower, SiteLocation);
             return space;
         }
 
@@ -113,7 +113,10 @@ namespace ifc2geojson.core
                     {
                         var newp = LonLat.AddDelta(SiteLocation.X.Value, SiteLocation.Y.Value, pnt.X * lengthUnitPower, pnt.Y * lengthUnitPower);
                         var point = new Point(newp.y, newp.x);
-                        polygon.ExteriorRing.Points.Add(point);
+                        if (!polygon.ExteriorRing.Points.Contains(point))
+                        {
+                            polygon.ExteriorRing.Points.Add(point);
+                        }
                     }
                 }
             }

@@ -4,6 +4,6 @@
     {
         public string Name { get; set; }
         public string LongName { get; set; }
-        public Wkx.Polygon Geometry { get; set; }
+        public Wkx.Polygon Polygon { get; set; }
     }
 }

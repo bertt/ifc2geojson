@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ifc2geojson.core.extensions;
+using System.Collections.Generic;
 using System.Linq;
 using Wkx;
 using Xbim.Ifc;
@@ -36,69 +37,71 @@ namespace ifc2geojson.core
         private static Building ParseBuilding(IIfcBuilding ifcBuilding, double LengthUnitPower, Point SiteLocation)
         {
             var building = new Building();
+            building.Location = ifcBuilding.ObjectPlacement.ToAbsoluteLocation(SiteLocation, LengthUnitPower);
             building.Name = ifcBuilding.Name;
             building.Description = ifcBuilding.Description;
-            building.Storeys = ParseStoreys(ifcBuilding.BuildingStoreys, LengthUnitPower, SiteLocation);
+            building.Storeys = ParseStoreys(ifcBuilding.BuildingStoreys, LengthUnitPower, building.Location);
             // todo: how to read properties like BuildingID, grossPlannedArea, NetAreaPlanned?
             return building;
         }
 
-        private static List<Storey> ParseStoreys(IEnumerable<IIfcBuildingStorey> ifcStoreys, double LengthUnitPower, Point SiteLocation)
+        private static List<Storey> ParseStoreys(IEnumerable<IIfcBuildingStorey> ifcStoreys, double LengthUnitPower, Point BuildingLocation)
         {
             var storeys = new List<Storey>();
             foreach (var ifcStorey in ifcStoreys)
             {
-                storeys.Add(ParseStoreys(ifcStorey, LengthUnitPower, SiteLocation));
+                storeys.Add(ParseStoreys(ifcStorey, LengthUnitPower, BuildingLocation));
             }
             return storeys;
         }
 
-        private static Storey ParseStoreys(IIfcBuildingStorey ifcStorey, double LengthUnitPower, Point SiteLocation)
+        private static Storey ParseStoreys(IIfcBuildingStorey ifcStorey, double LengthUnitPower, Point BuildingLocation)
         {
             var storey = new Storey();
             storey.Name = ifcStorey.Name;
             storey.Elevation = ifcStorey.Elevation.Value;
             storey.GrossFloorArea = ifcStorey.GrossFloorArea.Value;
-            storey.Spaces = ParseSpaces(ifcStorey.Spaces, LengthUnitPower, SiteLocation);
+            storey.Location = ifcStorey.ObjectPlacement.ToAbsoluteLocation(BuildingLocation, LengthUnitPower);
+            storey.Spaces = ParseSpaces(ifcStorey.Spaces, LengthUnitPower, storey.Location);
             // todo: parse walls, stairs, doors
             return storey;
         }
 
-        private static List<Space> ParseSpaces(IEnumerable<IIfcSpace> ifcSpaces, double LengthUnitPower, Point SiteLocation)
+        private static List<Space> ParseSpaces(IEnumerable<IIfcSpace> ifcSpaces, double LengthUnitPower, Point StoreyLocation)
         {
             var spaces = new List<Space>();
 
             foreach (var ifcSpace in ifcSpaces)
             {
-                spaces.Add(ParseSpace(ifcSpace, LengthUnitPower, SiteLocation));
+                spaces.Add(ParseSpace(ifcSpace, LengthUnitPower, StoreyLocation));
             }
             return spaces;
         }
 
-        private static Space ParseSpace(IIfcSpace ifcSpace, double LengthUnitPower, Point SiteLocation)
+        private static Space ParseSpace(IIfcSpace ifcSpace, double LengthUnitPower, Point StoreyLocation)
         {
             var space = new Space();
             space.Name = ifcSpace.Name;
             space.LongName = ifcSpace.LongName;
-            space.Polygon = HandleGeometry(ifcSpace, LengthUnitPower, SiteLocation);
+            space.Location = ifcSpace.ObjectPlacement.ToAbsoluteLocation(StoreyLocation, LengthUnitPower);
+            space.Polygon = HandleGeometry(ifcSpace, LengthUnitPower, space.Location);
             return space;
         }
 
-        private static Polygon HandleGeometry(IIfcSpace ifcSpace, double LengthUnitPower, Point SiteLocation)
+        private static Polygon HandleGeometry(IIfcSpace ifcSpace, double LengthUnitPower, Point SpaceLocation)
         {
             Polygon polygon = null; 
             var representation = ifcSpace.Representation.Representations[0].Items[0];
             if (representation is IfcFacetedBrep)
             {
-                polygon = HandleFacetedBrep((IfcFacetedBrep)representation, LengthUnitPower, SiteLocation);
+                polygon = HandleFacetedBrep((IfcFacetedBrep)representation, LengthUnitPower, SpaceLocation);
             }
 
             return polygon;
         }
 
-        private static Polygon HandleFacetedBrep(IfcFacetedBrep representation, double lengthUnitPower, Point SiteLocation)
+        private static Polygon HandleFacetedBrep(IfcFacetedBrep representation, double lengthUnitPower, Point SpaceLocation)
         {
-            // todo: rewrite this method for correct handling faceted brep
             var polygon = new Polygon();
             var outer = representation.Outer;
 
@@ -111,8 +114,8 @@ namespace ifc2geojson.core
 
                     foreach (var pnt in xbimPolygon)
                     {
-                        var newp = LonLat.AddDelta(SiteLocation.X.Value, SiteLocation.Y.Value, pnt.X * lengthUnitPower, pnt.Y * lengthUnitPower);
-                        var point = new Point(newp.y, newp.x);
+                        var newp = LonLat.AddDelta(SpaceLocation.X.Value, SpaceLocation.Y.Value, pnt.X * lengthUnitPower, pnt.Y * lengthUnitPower);
+                        var point = new Point(newp.x, newp.y); // todo: add z? 
                         if (!polygon.ExteriorRing.Points.Contains(point))
                         {
                             polygon.ExteriorRing.Points.Add(point);

@@ -1,7 +1,10 @@
 ﻿using CommandLine;
+using GeoJSON.Net.Feature;
 using ifc2geojson.core;
+using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
+using System.IO;
 using Xbim.Ifc;
 
 namespace ifc2geojson
@@ -27,9 +30,28 @@ namespace ifc2geojson
                 {
                     Console.WriteLine(storey.Name);
                 }
+
+                var fc = ToGeoJson(storeys[0]);
+                var serializedData = JsonConvert.SerializeObject(fc);
+                File.WriteAllText($"{storeys[0].Name}.geojson", serializedData);
+
                 stopwatch.Stop();
                 Console.WriteLine("Elapsed: " + stopwatch.Elapsed);
             });
+        }
+
+        private static FeatureCollection ToGeoJson(Storey storey)
+        {
+            var fc = new FeatureCollection();
+
+            foreach(var space in storey.Spaces) {
+
+                var poly = space.Polygon;
+                var f = new Feature(poly);
+                fc.Features.Add(f);
+            }
+
+            return fc;
         }
     }
 }

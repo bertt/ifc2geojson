@@ -1,4 +1,5 @@
-﻿using Wkx;
+﻿
+using GeoJSON.Net.Geometry;
 
 namespace ifc2geojson.core
 {
@@ -6,8 +7,8 @@ namespace ifc2geojson.core
     {
         public string Name { get; set; }
         public string LongName { get; set; }
-        public Wkx.Polygon Polygon { get; set; }
+        public Polygon Polygon { get; set; }
 
-        public Point Location { get; set; }
+        public Position Location { get; set; }
     }
 }

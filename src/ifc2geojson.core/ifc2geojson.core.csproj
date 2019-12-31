@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Wkx" Version="0.5.1" />
+    <PackageReference Include="GeoJSON.Net" Version="1.2.14" />
     <PackageReference Include="Xbim.Essentials" Version="5.1.274" />
   </ItemGroup>
 

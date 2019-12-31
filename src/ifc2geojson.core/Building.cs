@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Wkx;
+﻿using GeoJSON.Net.Geometry;
+using System.Collections.Generic;
 
 namespace ifc2geojson.core
 {
@@ -13,6 +13,6 @@ namespace ifc2geojson.core
 
         public int YearOfConstruction { get; set; }
 
-        public Point Location { get; set; }
+        public Position Location { get; set; }
     }
 }

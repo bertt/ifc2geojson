@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using GeoJSON.Net.Geometry;
 
 namespace ifc2geojson.core
 {
@@ -10,6 +10,6 @@ namespace ifc2geojson.core
 
         public Building Building { get; set; }
 
-        public Wkx.Point ReferencePoint { get; set; }
+        public Position ReferencePoint { get; set; }
     }
 }

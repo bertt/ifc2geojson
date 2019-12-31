@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Wkx;
+﻿using GeoJSON.Net.Geometry;
+using System.Collections.Generic;
 
 namespace ifc2geojson.core
 {
@@ -15,6 +15,6 @@ namespace ifc2geojson.core
         public List<Stair> Stairs { get; set; }
         public List<Door> Doors { get; set; }
 
-        public Point Location { get; set; }
+        public Position Location { get; set; }
     }
 }

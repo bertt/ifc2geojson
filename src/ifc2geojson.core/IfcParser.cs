@@ -1,7 +1,7 @@
-﻿using ifc2geojson.core.extensions;
+﻿using GeoJSON.Net.Geometry;
+using ifc2geojson.core.extensions;
 using System.Collections.Generic;
 using System.Linq;
-using Wkx;
 using Xbim.Ifc;
 using Xbim.Ifc4.GeometricModelResource;
 using Xbim.Ifc4.Interfaces;
@@ -29,12 +29,12 @@ namespace ifc2geojson.core
             var site = new Site();
             site.Name = ifcSite.Name;
             site.Description = ifcSite.Description;
-            site.ReferencePoint = new Point(ifcSite.RefLongitude.Value.AsDouble, ifcSite.RefLatitude.Value.AsDouble, ifcSite.RefElevation.Value);
+            site.ReferencePoint = new Position(ifcSite.RefLatitude.Value.AsDouble, ifcSite.RefLongitude.Value.AsDouble, ifcSite.RefElevation.Value);
             site.Building = ParseBuilding(ifcSite.Buildings.FirstOrDefault(), LengthUnitPower, site.ReferencePoint);
             return site;
         }
 
-        private static Building ParseBuilding(IIfcBuilding ifcBuilding, double LengthUnitPower, Point SiteLocation)
+        private static Building ParseBuilding(IIfcBuilding ifcBuilding, double LengthUnitPower, Position SiteLocation)
         {
             var building = new Building();
             building.Location = ifcBuilding.ObjectPlacement.ToAbsoluteLocation(SiteLocation, LengthUnitPower);
@@ -45,7 +45,7 @@ namespace ifc2geojson.core
             return building;
         }
 
-        private static List<Storey> ParseStoreys(IEnumerable<IIfcBuildingStorey> ifcStoreys, double LengthUnitPower, Point BuildingLocation)
+        private static List<Storey> ParseStoreys(IEnumerable<IIfcBuildingStorey> ifcStoreys, double LengthUnitPower, Position BuildingLocation)
         {
             var storeys = new List<Storey>();
             foreach (var ifcStorey in ifcStoreys)
@@ -55,7 +55,7 @@ namespace ifc2geojson.core
             return storeys;
         }
 
-        private static Storey ParseStoreys(IIfcBuildingStorey ifcStorey, double LengthUnitPower, Point BuildingLocation)
+        private static Storey ParseStoreys(IIfcBuildingStorey ifcStorey, double LengthUnitPower, Position BuildingLocation)
         {
             var storey = new Storey();
             storey.Name = ifcStorey.Name;
@@ -67,7 +67,7 @@ namespace ifc2geojson.core
             return storey;
         }
 
-        private static List<Space> ParseSpaces(IEnumerable<IIfcSpace> ifcSpaces, double LengthUnitPower, Point StoreyLocation)
+        private static List<Space> ParseSpaces(IEnumerable<IIfcSpace> ifcSpaces, double LengthUnitPower, Position StoreyLocation)
         {
             var spaces = new List<Space>();
 
@@ -78,7 +78,7 @@ namespace ifc2geojson.core
             return spaces;
         }
 
-        private static Space ParseSpace(IIfcSpace ifcSpace, double LengthUnitPower, Point StoreyLocation)
+        private static Space ParseSpace(IIfcSpace ifcSpace, double LengthUnitPower, Position StoreyLocation)
         {
             var space = new Space();
             space.Name = ifcSpace.Name;
@@ -88,7 +88,7 @@ namespace ifc2geojson.core
             return space;
         }
 
-        private static Polygon HandleGeometry(IIfcSpace ifcSpace, double LengthUnitPower, Point SpaceLocation)
+        private static Polygon HandleGeometry(IIfcSpace ifcSpace, double LengthUnitPower, Position SpaceLocation)
         {
             Polygon polygon = null; 
             var representation = ifcSpace.Representation.Representations[0].Items[0];
@@ -100,9 +100,9 @@ namespace ifc2geojson.core
             return polygon;
         }
 
-        private static Polygon HandleFacetedBrep(IfcFacetedBrep representation, double lengthUnitPower, Point SpaceLocation)
+        private static Polygon HandleFacetedBrep(IfcFacetedBrep representation, double lengthUnitPower, Position SpaceLocation)
         {
-            var polygon = new Polygon();
+            var points = new List<IPosition>();
             var outer = representation.Outer;
 
             foreach (var face in outer.CfsFaces)
@@ -114,15 +114,22 @@ namespace ifc2geojson.core
 
                     foreach (var pnt in xbimPolygon)
                     {
-                        var newp = LonLat.AddDelta(SpaceLocation.X.Value, SpaceLocation.Y.Value, pnt.X * lengthUnitPower, pnt.Y * lengthUnitPower);
-                        var point = new Point(newp.x, newp.y); // todo: add z? 
-                        if (!polygon.ExteriorRing.Points.Contains(point))
+                        var newp = LonLat.AddDelta(SpaceLocation.Longitude, SpaceLocation.Latitude, pnt.X * lengthUnitPower, pnt.Y * lengthUnitPower);
+                        var position = new Position(newp.y, newp.x); // todo: add z? 
+                        if (!points.Contains(position))
                         {
-                            polygon.ExteriorRing.Points.Add(point);
+                            points.Add(position);
                         }
                     }
                 }
             }
+            var ls = new LineString(points);
+            if (!ls.IsClosed())
+            {
+                points.Add(points[0]);
+                ls = new LineString(points);
+            }
+            var polygon = new Polygon(new List<LineString> { ls });
             return polygon;
         }
     }

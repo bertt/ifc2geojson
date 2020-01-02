@@ -3,17 +3,8 @@ using System.Collections.Generic;
 
 namespace ifc2geojson.core
 {
-    public class Storey: IElement
+    public class Storey: Element
     {
-        public string Name { get; set; }
-
-        public string Description { get; set; }
-
-        public string GlobalId { get; set; }
-
-        public Dictionary<string, object> Properties { get; set; }
-
-
         public double Elevation { get; set; }
 
         public double GrossFloorArea { get; set; }
@@ -23,16 +14,5 @@ namespace ifc2geojson.core
         public List<Door> Doors { get; set; }
 
         public Position Location { get; set; }
-
-
-        public double BoundingBoxLength { get; set; }
-        public double BoundingBoxWidth { get; set; }
-        public double BoundingBoxHeight { get; set; }
-
-        public double GlobalX { get; set; }
-        public double GlobalY { get; set; }
-
-        public double GlobalZ { get; set; }
-
     }
 }

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Xbim.Ifc;
 using Xbim.Ifc4.GeometricModelResource;
-using Xbim.Ifc4.GeometryResource;
 using Xbim.Ifc4.Interfaces;
 using Xbim.Ifc4.Kernel;
 using Xbim.Ifc4.PropertyResource;
@@ -14,7 +13,7 @@ namespace ifc2geojson.core
 {
     public static class IfcParser
     {
-        public static void ParseElement(IElement element, IIfcRoot root)
+        public static void ParseElement(Element element, IIfcRoot root)
         {
             element.Name = root.Name;
             element.GlobalId = root.GlobalId;
@@ -108,7 +107,7 @@ namespace ifc2geojson.core
             return site;
         }
 
-        private static void ParseGeometry(IIfcProduct ifcProduct, IElement element)
+        private static void ParseGeometry(IIfcProduct ifcProduct, Element element)
         {
             var representation_box = ifcProduct.Representation.Representations.Where(x => x.RepresentationIdentifier == "Box").FirstOrDefault(); // envelope
             var bb = (IfcBoundingBox)representation_box.Items.FirstOrDefault();

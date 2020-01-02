@@ -18,6 +18,7 @@ namespace ifc2geojson.tests
         public void ConvertModel()
         {
             var project = IfcParser.ParseModel(model);
+
             Assert.IsTrue(project.LengthUnitPower == 1);
             Assert.IsTrue(project.Name == "Projekt-FZK-Haus");
             Assert.IsTrue(project.Description == "Projekt FZK-House create by KHH Forschuungszentrum Karlsruhe");
@@ -32,18 +33,18 @@ namespace ifc2geojson.tests
             Assert.IsTrue(project.Site.ReferencePoint.Longitude== 8.436539);
             Assert.IsTrue(project.Site.ReferencePoint.Latitude == 49.100435);
             Assert.IsTrue(project.Site.ReferencePoint.Altitude == 110);
+            Assert.IsTrue(project.Site.BoundingBoxLength == 18);
+            Assert.IsTrue(project.Site.BoundingBoxWidth == 16);
+            Assert.IsTrue(project.Site.BoundingBoxHeight == 1);
             Assert.IsTrue(project.Site.GlobalId == "0KMpiAlnb52RgQuM1CwVfd");
             Assert.IsTrue(project.Site.Properties.Count == 4);
             Assert.IsTrue(project.Site.Properties["GrossArea"].ToString()=="0");
             Assert.IsTrue(project.Site.Properties["GrossPerimeter"].ToString() == "0");
             Assert.IsTrue(project.Site.Properties["BuildingHeightLimit"].ToString() == "9");
             Assert.IsTrue(project.Site.Properties["GrossAreaPlanned"].ToString() == "0");
-
-            // next tests are failing, but why. These values are obtained from BIM Vision
-            //Assert.IsTrue(project.Site.GlobalX == -3);
-            //Assert.IsTrue(project.Site.GlobalY == -3);
-            //Assert.IsTrue(project.Site.GlobalZ == -1);
-
+            Assert.IsTrue(project.Site.GlobalX == -3);
+            Assert.IsTrue(project.Site.GlobalY == -3);
+            Assert.IsTrue(project.Site.GlobalZ == -1);
             Assert.IsTrue(project.Site.Building.Name == "FZK-Haus");
             Assert.IsTrue(project.Site.Building.GlobalId == "2hQBAVPOr5VxhS3Jl0O47h");
             Assert.IsTrue(project.Site.Building.Storeys.Count == 2);
@@ -70,15 +71,12 @@ namespace ifc2geojson.tests
             Assert.IsTrue(erdSurvey.Spaces[0].Properties.Count > 50 );
             Assert.IsTrue(erdSurvey.Spaces[0].Properties["ClearHeight"].ToString() == "2.5");
 
+
             Assert.IsTrue(erdSurvey.Properties.Count == 4);
             Assert.IsTrue(erdSurvey.Properties["GrossFloorArea"].ToString() == "119.824049906");
             Assert.IsTrue(erdSurvey.Properties["GrossHeight"].ToString() == "2.7");
             Assert.IsTrue(erdSurvey.Properties["Height"].ToString() == "2.7");
             Assert.IsTrue(erdSurvey.Properties["NetHeight"].ToString() == "2.7");
-
-            //Assert.IsTrue(erdSurvey.Spaces[0].GlobalX == 7.65);
-            //Assert.IsTrue(erdSurvey.Spaces[0].GlobalY == 4.25);
-            //Assert.IsTrue(erdSurvey.Spaces[0].GlobalZ == 0);
 
             Assert.IsTrue(erdSurvey.Spaces[0].Location.Longitude == 8.43671310669212 && erdSurvey.Spaces[0].Location.Latitude == 49.100522136582555 && erdSurvey.Spaces[0].Location.Altitude == 110);
             var schlafZimmer = erdSurvey.Spaces[0];

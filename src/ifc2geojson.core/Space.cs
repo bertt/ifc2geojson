@@ -25,5 +25,9 @@ namespace ifc2geojson.core
 
         public double GlobalZ { get; set; }
 
+        public double BoundingBoxLength { get; set; }
+        public double BoundingBoxWidth { get; set; }
+        public double BoundingBoxHeight { get; set; }
+
     }
 }

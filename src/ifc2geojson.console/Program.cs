@@ -1,5 +1,6 @@
 ﻿using CommandLine;
 using GeoJSON.Net.Feature;
+using GeoJSON.Net.Geometry;
 using ifc2geojson.core;
 using Newtonsoft.Json;
 using System;
@@ -46,8 +47,10 @@ namespace ifc2geojson
 
             foreach(var space in storey.Spaces) {
 
-                var poly = space.Polygon;
-                var f = new Feature(poly);
+                // var poly = space.Location;
+                var point = new Point(space.Location);
+                var f = new Feature(point);
+                f.Properties.Add("name", space.LongName);
                 fc.Features.Add(f);
             }
 

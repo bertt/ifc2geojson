@@ -6,30 +6,113 @@ using Xbim.Ifc;
 using Xbim.Ifc4.GeometricModelResource;
 using Xbim.Ifc4.Interfaces;
 using Xbim.Ifc4.Kernel;
+using Xbim.Ifc4.PropertyResource;
 using Xbim.Ifc4.TopologyResource;
 
 namespace ifc2geojson.core
 {
     public static class IfcParser
     {
+        public static void ParseElement(IElement element, IIfcRoot root)
+        {
+            element.Name = root.Name;
+            element.GlobalId = root.GlobalId;
+            element.Description = root.Description;
+        }
+
         public static Project ParseModel(IfcStore model)
         {
             var ifcProject = model.FederatedInstances.OfType<IfcProject>().FirstOrDefault();
-
             var project = new Project();
             project.LengthUnitPower = ifcProject.UnitsInContext.LengthUnitPower;
-            project.Name = ifcProject.Name;
-            project.Description = ifcProject.Description;
+            project.Properties = GetPropertiesFromContext(ifcProject);
+            ParseElement(project, ifcProject);
             project.Site = ParseSite(ifcProject.Sites.FirstOrDefault(), project.LengthUnitPower);
             return project;
+        }
+
+        private static Dictionary<string, object> GetPropertiesFromObject(IIfcObject obj)
+        {
+            var relations = obj.IsDefinedBy.OfType<IfcRelDefinesByProperties>();
+            var dict = GetProperties(relations);
+            return dict;
+        }
+
+        private static Dictionary<string, object> GetPropertiesFromContext(IfcContext context)
+        {
+            var relations = context.IsDefinedBy.OfType<IfcRelDefinesByProperties>();
+            var dict = GetProperties(relations);
+            return dict;
+        }
+
+        private static Dictionary<string, object> GetProperties(IEnumerable<IfcRelDefinesByProperties> relations)
+        {
+            var dict = new Dictionary<string, object>();
+            foreach (var rel in relations)
+            {
+                var relatedPropdef = rel.RelatingPropertyDefinition;
+
+                if(relatedPropdef is IfcPropertySet)
+                {
+                    var propset = (IfcPropertySet)rel.RelatingPropertyDefinition;
+                    var properties = propset.PropertySetDefinitions;
+                    foreach (var property in properties)
+                    {
+                        var props = ((IIfcPropertySet)property).HasProperties;
+                        foreach (var prop in props)
+                        {
+                            var key = ((IfcPropertySingleValue)prop).Name;
+                            var val = ((IfcPropertySingleValue)prop).NominalValue.Value;
+                            if (!dict.ContainsKey(key))
+                            {
+                                dict.Add(key, val);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    var elQuantity = (IIfcElementQuantity)relatedPropdef;
+                    foreach(var q in elQuantity.Quantities)
+                    {
+                        if(q is IIfcQuantityLength)
+                        {
+                            var length = (IIfcQuantityLength)q;
+                            if (!dict.ContainsKey(length.Name)){
+                                dict.Add(length.Name, length.LengthValue);
+                            }
+                        }
+                        else if(q is IIfcQuantityArea)
+                        {
+                            var area = (IIfcQuantityArea)q;
+                            if (!dict.ContainsKey(area.Name))
+                            {
+                                dict.Add(area.Name, area.AreaValue);
+                            }
+                        }
+                    }
+                }
+            }
+            return dict;
         }
 
         private static Site ParseSite(IIfcSite ifcSite, double LengthUnitPower)
         {
             var site = new Site();
-            site.Name = ifcSite.Name;
-            site.Description = ifcSite.Description;
+            ParseElement(site, ifcSite);
+            // ifcSite.IsDefinedBy
+
+            site.Properties = GetPropertiesFromObject(ifcSite);
+
             site.ReferencePoint = new Position(ifcSite.RefLatitude.Value.AsDouble, ifcSite.RefLongitude.Value.AsDouble, ifcSite.RefElevation.Value);
+
+            // todo: check if following code is correct or not
+            var placement = ifcSite.ObjectPlacement;
+            var localPlacement = (IIfcLocalPlacement)placement;
+            var placement3d = (IIfcAxis2Placement3D)localPlacement.RelativePlacement;
+            site.GlobalX = placement3d.Location.X;
+            site.GlobalY = placement3d.Location.Y;
+            site.GlobalX = placement3d.Location.Z;
             site.Building = ParseBuilding(ifcSite.Buildings.FirstOrDefault(), LengthUnitPower, site.ReferencePoint);
             return site;
         }
@@ -37,9 +120,9 @@ namespace ifc2geojson.core
         private static Building ParseBuilding(IIfcBuilding ifcBuilding, double LengthUnitPower, Position SiteLocation)
         {
             var building = new Building();
+            ParseElement(building, ifcBuilding);
+            building.Properties = GetPropertiesFromObject(ifcBuilding);
             building.Location = ifcBuilding.ObjectPlacement.ToAbsoluteLocation(SiteLocation, LengthUnitPower);
-            building.Name = ifcBuilding.Name;
-            building.Description = ifcBuilding.Description;
             building.Storeys = ParseStoreys(ifcBuilding.BuildingStoreys, LengthUnitPower, building.Location);
             // todo: how to read properties like BuildingID, grossPlannedArea, NetAreaPlanned?
             return building;
@@ -58,7 +141,8 @@ namespace ifc2geojson.core
         private static Storey ParseStoreys(IIfcBuildingStorey ifcStorey, double LengthUnitPower, Position BuildingLocation)
         {
             var storey = new Storey();
-            storey.Name = ifcStorey.Name;
+            ParseElement(storey, ifcStorey);
+            storey.Properties = GetPropertiesFromObject(ifcStorey);
             storey.Elevation = ifcStorey.Elevation.Value;
             storey.GrossFloorArea = ifcStorey.GrossFloorArea.Value;
             storey.Location = ifcStorey.ObjectPlacement.ToAbsoluteLocation(BuildingLocation, LengthUnitPower);
@@ -81,7 +165,8 @@ namespace ifc2geojson.core
         private static Space ParseSpace(IIfcSpace ifcSpace, double LengthUnitPower, Position StoreyLocation)
         {
             var space = new Space();
-            space.Name = ifcSpace.Name;
+            ParseElement(space, ifcSpace);
+            space.Properties = GetPropertiesFromObject(ifcSpace);
             space.LongName = ifcSpace.LongName;
             space.Location = ifcSpace.ObjectPlacement.ToAbsoluteLocation(StoreyLocation, LengthUnitPower);
             space.Polygon = HandleGeometry(ifcSpace, LengthUnitPower, space.Location);
@@ -90,7 +175,7 @@ namespace ifc2geojson.core
 
         private static Polygon HandleGeometry(IIfcSpace ifcSpace, double LengthUnitPower, Position SpaceLocation)
         {
-            Polygon polygon = null; 
+            Polygon polygon = null;
             var representation = ifcSpace.Representation.Representations[0].Items[0];
             if (representation is IfcFacetedBrep)
             {

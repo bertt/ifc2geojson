@@ -36,6 +36,8 @@ namespace ifc2geojson.tests
             Assert.IsTrue(project.Site.BoundingBoxLength == 18);
             Assert.IsTrue(project.Site.BoundingBoxWidth == 16);
             Assert.IsTrue(project.Site.BoundingBoxHeight == 1);
+            Assert.IsTrue(project.Site.HasOwnGeometry == true);
+
             Assert.IsTrue(project.Site.GlobalId == "0KMpiAlnb52RgQuM1CwVfd");
             Assert.IsTrue(project.Site.Properties.Count == 4);
             Assert.IsTrue(project.Site.Properties["GrossArea"].ToString()=="0");
@@ -47,6 +49,13 @@ namespace ifc2geojson.tests
             Assert.IsTrue(project.Site.GlobalZ == -1);
             Assert.IsTrue(project.Site.Building.Name == "FZK-Haus");
             Assert.IsTrue(project.Site.Building.GlobalId == "2hQBAVPOr5VxhS3Jl0O47h");
+            Assert.IsTrue(project.Site.Building.HasOwnGeometry == false);
+
+            // todo: get following tests working...
+            //Assert.IsTrue(project.Site.Building.GlobalX == -0.5);
+            //Assert.IsTrue(project.Site.Building.GlobalY == -0.5);
+            //Assert.IsTrue(project.Site.Building.GlobalZ == 0.2);
+
             Assert.IsTrue(project.Site.Building.Storeys.Count == 2);
             Assert.IsTrue(project.Site.Building.Location == project.Site.ReferencePoint);
             Assert.IsTrue(project.Site.Building.Properties.Count == 10);
@@ -61,25 +70,37 @@ namespace ifc2geojson.tests
             Assert.IsFalse((bool)project.Site.Building.Properties["SprinklerProtectionAutomatic"]);
             Assert.IsTrue(project.Site.Building.Properties["YearOfConstruction"].ToString() == "2008");
 
-            var erdSurvey = project.Site.Building.Storeys[0];
-            Assert.IsTrue(erdSurvey.Name == "Erdgeschoss");
-            Assert.IsTrue(erdSurvey.Elevation == 0);
-            Assert.IsTrue(erdSurvey.GrossFloorArea== 119.824049906);
-            Assert.IsTrue(erdSurvey.Spaces.Count == 6);
-            Assert.IsTrue(erdSurvey.Spaces[0].Name == "4");
-            Assert.IsTrue(erdSurvey.Spaces[0].LongName == "Schlafzimmer");
-            Assert.IsTrue(erdSurvey.Spaces[0].Properties.Count > 50 );
-            Assert.IsTrue(erdSurvey.Spaces[0].Properties["ClearHeight"].ToString() == "2.5");
+            var erdStorey = project.Site.Building.Storeys[0];
+            Assert.IsTrue(erdStorey.Name == "Erdgeschoss");
+            Assert.IsTrue(erdStorey.Elevation == 0);
+            Assert.IsTrue(erdStorey.GrossFloorArea== 119.824049906);
+            Assert.IsTrue(erdStorey.HasOwnGeometry == false);
 
+            // todo: get following tests working...
+            //Assert.IsTrue(erdSurvey.GlobalX == 0);
+            //Assert.IsTrue(erdSurvey.GlobalY == 0);
+            //Assert.IsTrue(erdSurvey.GlobalZ == -0.2);
 
-            Assert.IsTrue(erdSurvey.Properties.Count == 4);
-            Assert.IsTrue(erdSurvey.Properties["GrossFloorArea"].ToString() == "119.824049906");
-            Assert.IsTrue(erdSurvey.Properties["GrossHeight"].ToString() == "2.7");
-            Assert.IsTrue(erdSurvey.Properties["Height"].ToString() == "2.7");
-            Assert.IsTrue(erdSurvey.Properties["NetHeight"].ToString() == "2.7");
+            Assert.IsTrue(erdStorey.Spaces.Count == 6);
+            Assert.IsTrue(erdStorey.Spaces[0].Name == "4");
+            Assert.IsTrue(erdStorey.Spaces[0].LongName == "Schlafzimmer");
+            Assert.IsTrue(erdStorey.Spaces[0].Properties.Count > 50 );
+            Assert.IsTrue(erdStorey.Spaces[0].Properties["ClearHeight"].ToString() == "2.5");
+            Assert.IsTrue(erdStorey.Spaces[0].HasOwnGeometry == true);
 
-            Assert.IsTrue(erdSurvey.Spaces[0].Location.Longitude == 8.43671310669212 && erdSurvey.Spaces[0].Location.Latitude == 49.100522136582555 && erdSurvey.Spaces[0].Location.Altitude == 110);
-            var schlafZimmer = erdSurvey.Spaces[0];
+            // todo: get following tests working...
+            //Assert.IsTrue(erdSurvey.Spaces[0].GlobalX == 7.65);
+            //Assert.IsTrue(erdSurvey.Spaces[0].GlobalY == 4.25);
+            //Assert.IsTrue(erdSurvey.Spaces[0].GlobalZ == 0);
+
+            Assert.IsTrue(erdStorey.Properties.Count == 4);
+            Assert.IsTrue(erdStorey.Properties["GrossFloorArea"].ToString() == "119.824049906");
+            Assert.IsTrue(erdStorey.Properties["GrossHeight"].ToString() == "2.7");
+            Assert.IsTrue(erdStorey.Properties["Height"].ToString() == "2.7");
+            Assert.IsTrue(erdStorey.Properties["NetHeight"].ToString() == "2.7");
+
+            Assert.IsTrue(erdStorey.Spaces[0].Location.Longitude == 8.43671310669212 && erdStorey.Spaces[0].Location.Latitude == 49.100522136582555 && erdStorey.Spaces[0].Location.Altitude == 110);
+            var schlafZimmer = erdStorey.Spaces[0];
             Assert.IsTrue(schlafZimmer.Polygon.Coordinates[0].Coordinates.Count ==5);
         }
     }

@@ -101,30 +101,37 @@ namespace ifc2geojson.core
             var site = new Site();
             ParseElement(site, ifcSite);
             site.Properties = GetPropertiesFromObject(ifcSite);
-            ParseGeometry(ifcSite, site);
+            ParseRepresentation(ifcSite.Representation, site);
             site.ReferencePoint = new Position(ifcSite.RefLatitude.Value.AsDouble, ifcSite.RefLongitude.Value.AsDouble, ifcSite.RefElevation.Value);
             site.Building = ParseBuilding(ifcSite.Buildings.FirstOrDefault(), LengthUnitPower, site.ReferencePoint);
             return site;
         }
 
-        private static void ParseGeometry(IIfcProduct ifcProduct, Element element)
+        private static void ParseRepresentation(IIfcProductRepresentation ifcProductRepresentation, Element element)
         {
-            var representation_box = ifcProduct.Representation.Representations.Where(x => x.RepresentationIdentifier == "Box").FirstOrDefault(); // envelope
-            var bb = (IfcBoundingBox)representation_box.Items.FirstOrDefault();
-            element.GlobalX = bb.Corner.X;
-            element.GlobalY = bb.Corner.Y;
-            element.GlobalZ = bb.Corner.Z;
-            element.BoundingBoxLength = bb.XDim;
-            element.BoundingBoxWidth = bb.YDim;
-            element.BoundingBoxHeight = bb.ZDim;
+            if (ifcProductRepresentation != null)
+            {
+                var representation_box = ifcProductRepresentation.Representations.Where(x => x.RepresentationIdentifier == "Box").FirstOrDefault(); // envelope
+                var bb = (IfcBoundingBox)representation_box.Items.FirstOrDefault();
+                element.GlobalX = bb.Corner.X;
+                element.GlobalY = bb.Corner.Y;
+                element.GlobalZ = bb.Corner.Z;
+                element.BoundingBoxLength = bb.XDim;
+                element.BoundingBoxWidth = bb.YDim;
+                element.BoundingBoxHeight = bb.ZDim;
+                element.HasOwnGeometry = true;
+            }
+            else
+            {
+                element.HasOwnGeometry = false;
+            }
         }
 
         private static Building ParseBuilding(IIfcBuilding ifcBuilding, double LengthUnitPower, Position SiteLocation)
         {
             var building = new Building();
             ParseElement(building, ifcBuilding);
-            // in case of building representation is null, todo search other method
-            // ParseGeometry(ifcBuilding, building);
+            ParseRepresentation(ifcBuilding.Representation, building);
             building.Properties = GetPropertiesFromObject(ifcBuilding);
             building.Location = ifcBuilding.ObjectPlacement.ToAbsoluteLocation(SiteLocation, LengthUnitPower);
             building.Storeys = ParseStoreys(ifcBuilding.BuildingStoreys, LengthUnitPower, building.Location);
@@ -145,7 +152,7 @@ namespace ifc2geojson.core
         {
             var storey = new Storey();
             ParseElement(storey, ifcStorey);
-            // ParseGeometry(ifcStorey, storey);
+            ParseRepresentation(ifcStorey.Representation, storey);
             storey.Properties = GetPropertiesFromObject(ifcStorey);
             storey.Elevation = ifcStorey.Elevation.Value;
             storey.GrossFloorArea = ifcStorey.GrossFloorArea.Value;
@@ -170,7 +177,7 @@ namespace ifc2geojson.core
         {
             var space = new Space();
             ParseElement(space, ifcSpace);
-            ParseGeometry(ifcSpace, space);
+            ParseRepresentation(ifcSpace.Representation, space);
 
             space.Properties = GetPropertiesFromObject(ifcSpace);
             space.LongName = ifcSpace.LongName;

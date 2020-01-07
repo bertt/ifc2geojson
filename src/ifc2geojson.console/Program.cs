@@ -35,8 +35,10 @@ namespace ifc2geojson
                 var fc = ToGeoJson(storeys[0]);
                 var serializedData = JsonConvert.SerializeObject(fc);
                 File.WriteAllText($"{storeys[0].Name}.geojson", serializedData);
+                Console.WriteLine("File created: " + $"{storeys[0].Name}.geojson");
 
                 stopwatch.Stop();
+
                 Console.WriteLine("Elapsed: " + stopwatch.Elapsed);
             });
         }

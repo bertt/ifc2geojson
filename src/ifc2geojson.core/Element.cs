@@ -23,5 +23,6 @@ namespace ifc2geojson.core
 
         public double GlobalZ { get; set; }
 
+        public bool HasOwnGeometry { get; set; }
     }
 }

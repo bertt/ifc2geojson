@@ -9,5 +9,6 @@ namespace ifc2geojson.core
         public string FriendlyName { get; set; }
 
         public double LengthUnitPower { get; set; }
+        public List<Wall> Walls { get; set; }
     }
 }

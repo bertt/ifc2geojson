@@ -38,6 +38,16 @@ namespace ifc2geojson.tests
             Assert.IsTrue(project.Site.Building.Storeys[0].Properties.Count == 1);
             Assert.IsTrue(project.Site.Building.Storeys[0].Properties["AboveGround"] == null);
             Assert.IsTrue(project.FriendlyName == "Project Number");
+            Assert.IsTrue(project.Walls.Count == 1);
+            Assert.IsTrue(project.Walls[0].GlobalId == "3uPlCH7wP2fu4If6Q86Sno");
+            Assert.IsTrue(project.Walls[0].Name == "Basic Wall:Wall-Ext_102Bwk-75Ins-100LBlk-12P:285323");
+            Assert.IsTrue(project.Walls[0].Properties["Reference"].ToString() == "Wall-Ext_102Bwk-75Ins-100LBlk-12P");
+            Assert.IsTrue((bool)project.Walls[0].Properties["IsExternal"]);
+            Assert.IsTrue(!(bool)project.Walls[0].Properties["LoadBearing"]);
+            Assert.IsTrue(project.Walls[0].ObjectType=="Basic Wall:Wall-Ext_102Bwk-75Ins-100LBlk-12P:45419");
+            Assert.IsTrue(project.Walls[0].Properties.Count == 5);
+
+
 
             // todo: fix following values
             // Assert.IsTrue(project.Site.GlobalX == -3603.117269);
@@ -46,6 +56,8 @@ namespace ifc2geojson.tests
             // Assert.IsTrue(project.Site.BoundingBoxHeight == 3000);
             // Assert.IsTrue(project.Site.BoundingBoxLength == 6000);
             Assert.IsTrue(project.Site.GlobalZ == 0);
+
+
         }
         [Test]
         public void GlobalXTest()

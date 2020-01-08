@@ -24,7 +24,6 @@ namespace ifc2geojson.core
         {
             var ifcProject = model.FederatedInstances.OfType<IIfcProject>().FirstOrDefault();
             
-            //var walls = model.FederatedInstances.OfType<IIfcWall>().ToList();
             //var windows = model.FederatedInstances.OfType<IIfcWindow>().ToList();
             //var spaces = model.FederatedInstances.OfType<IIfcSpace>().ToList();
             //var storeys = model.FederatedInstances.OfType<IIfcBuildingStorey>().ToList();
@@ -39,7 +38,26 @@ namespace ifc2geojson.core
             project.Properties = GetPropertiesFromContext(ifcProject);
             ParseElement(project, ifcProject);
             project.Site = ParseSite(ifcProject.Sites.FirstOrDefault(), project.LengthUnitPower);
+
+            var ifcWalls = model.FederatedInstances.OfType<IIfcWall>().ToList();
+            var walls = ParseWalls(ifcWalls);
+            project.Walls = walls;
+
             return project;
+        }
+
+        private static List<Wall> ParseWalls(List<IIfcWall> ifcWalls)
+        {
+            var walls = new List<Wall>();
+            foreach(var ifcWall in ifcWalls)
+            {
+                var wall = new Wall();
+                ParseElement(wall, ifcWall);
+                wall.Properties = GetPropertiesFromObject(ifcWall);
+                wall.ObjectType = ifcWall.ObjectType;
+                walls.Add(wall);
+            }
+            return walls;
         }
 
         private static Dictionary<string, object> GetPropertiesFromObject(IIfcObject obj)

@@ -89,6 +89,9 @@ namespace ifc2geojson.tests
             Assert.IsTrue(erdStorey.Spaces[0].Properties.Count > 50 );
             Assert.IsTrue(erdStorey.Spaces[0].Properties["ClearHeight"].ToString() == "2.5");
             Assert.IsTrue(erdStorey.Spaces[0].HasOwnGeometry == true);
+            Assert.IsTrue(erdStorey.Spaces[0].GrossFloorArea == 22.0725);
+            Assert.IsTrue(erdStorey.Spaces[0].GrossPerimeter == 19);
+            Assert.IsTrue(erdStorey.Spaces[0].Height == 2.5);
 
             // todo: get following tests working...
             //Assert.IsTrue(erdSurvey.Spaces[0].GlobalX == 7.65);

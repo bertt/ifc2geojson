@@ -1,6 +1,4 @@
-﻿
-using GeoJSON.Net.Geometry;
-using System.Collections.Generic;
+﻿using GeoJSON.Net.Geometry;
 
 namespace ifc2geojson.core
 {
@@ -10,5 +8,11 @@ namespace ifc2geojson.core
         public Polygon Polygon { get; set; }
 
         public Position Location { get; set; }
+
+        public double Height { get; set; }
+
+        public double NetfloorArea { get; set; }
+        public double GrossFloorArea { get; set; }
+        public double GrossPerimeter { get; set; }
     }
 }

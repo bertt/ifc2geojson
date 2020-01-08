@@ -1,11 +1,12 @@
 ﻿using GeoJSON.Net.Geometry;
 using ifc2geojson.core.extensions;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xbim.Ifc;
+using Xbim.Ifc2x3.Kernel;
 using Xbim.Ifc4.GeometricModelResource;
 using Xbim.Ifc4.Interfaces;
+using Xbim.Ifc4.ProductExtension;
 using Xbim.Ifc4.TopologyResource;
 
 namespace ifc2geojson.core
@@ -25,7 +26,10 @@ namespace ifc2geojson.core
             var project = new Project();
             var unitName = ifcProject.UnitsInContext.Units.FirstOrDefault().FullName;
             project.LengthUnitPower = unitName == "MILLIMETRE" ? 1000 : 1;
-
+            if(ifcProject is IfcProject)
+            {
+                project.FriendlyName = ((IfcProject)ifcProject).FriendlyName;
+            }
             project.Properties = GetPropertiesFromContext(ifcProject);
             ParseElement(project, ifcProject);
             project.Site = ParseSite(ifcProject.Sites.FirstOrDefault(), project.LengthUnitPower);
@@ -203,6 +207,15 @@ namespace ifc2geojson.core
             space.LongName = ifcSpace.LongName;
             space.Location = ifcSpace.ObjectPlacement.ToAbsoluteLocation(StoreyLocation, LengthUnitPower);
             space.Polygon = HandleGeometry(ifcSpace, LengthUnitPower, space.Location);
+            if(ifcSpace is IfcSpace)
+            {
+                space.Height = ((IfcSpace)ifcSpace).Height.Value;
+                space.NetfloorArea = ((IfcSpace)ifcSpace).NetFloorArea.Value;
+                space.GrossFloorArea = ((IfcSpace)ifcSpace).GrossFloorArea.Value;
+                space.GrossPerimeter = ((IfcSpace)ifcSpace).GrossPerimeter.Value;
+            }
+            // space.Height = ifcSpace.Height;
+
             return space;
         }
 

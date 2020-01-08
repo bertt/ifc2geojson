@@ -3,6 +3,7 @@ using NUnit.Framework;
 using System.Linq;
 using Xbim.Common.Step21;
 using Xbim.Ifc;
+using Xbim.Ifc2x3.Kernel;
 using Xbim.Ifc4.Interfaces;
 
 namespace ifc2geojson.tests
@@ -36,6 +37,7 @@ namespace ifc2geojson.tests
             Assert.IsTrue(project.Site.Building.Storeys[0].Name == "Level 0");
             Assert.IsTrue(project.Site.Building.Storeys[0].Properties.Count == 1);
             Assert.IsTrue(project.Site.Building.Storeys[0].Properties["AboveGround"] == null);
+            Assert.IsTrue(project.FriendlyName == "Project Number");
 
             // todo: fix following values
             // Assert.IsTrue(project.Site.GlobalX == -3603.117269);
@@ -44,15 +46,14 @@ namespace ifc2geojson.tests
             // Assert.IsTrue(project.Site.BoundingBoxHeight == 3000);
             // Assert.IsTrue(project.Site.BoundingBoxLength == 6000);
             Assert.IsTrue(project.Site.GlobalZ == 0);
-
-
         }
         [Test]
         public void GlobalXTest()
         {
-            var ifcProject = model.FederatedInstances.OfType<IIfcProject>().FirstOrDefault();
+            var ifcProject = model.FederatedInstances.OfType<IfcProject>().FirstOrDefault();
             var site = ifcProject.Sites.FirstOrDefault();
             Assert.IsTrue(site.Name == "Default");
+            Assert.IsTrue(ifcProject.FriendlyName == "Project Number");
             // q: how to get from IIfcSite for Location: ProjectLocation, Top Elevation, Bottom Elevation, Global Top Elevation, Global Bottom Elevation ?
             // q: how to get from IIfcSite for geometry: Has Own Geometry, GllobalX, GlobalY, GlobalZ. BundingBox (length, width, height) ?
         }

@@ -6,6 +6,8 @@ namespace ifc2geojson.core
     {
         public Site Site { get; set; }
 
+        public string FriendlyName { get; set; }
+
         public double LengthUnitPower { get; set; }
     }
 }

@@ -23,6 +23,12 @@ namespace ifc2geojson.core
         public static Project ParseModel(IfcStore model)
         {
             var ifcProject = model.FederatedInstances.OfType<IIfcProject>().FirstOrDefault();
+            
+            //var walls = model.FederatedInstances.OfType<IIfcWall>().ToList();
+            //var windows = model.FederatedInstances.OfType<IIfcWindow>().ToList();
+            //var spaces = model.FederatedInstances.OfType<IIfcSpace>().ToList();
+            //var storeys = model.FederatedInstances.OfType<IIfcBuildingStorey>().ToList();
+
             var project = new Project();
             var unitName = ifcProject.UnitsInContext.Units.FirstOrDefault().FullName;
             project.LengthUnitPower = unitName == "MILLIMETRE" ? 1000 : 1;

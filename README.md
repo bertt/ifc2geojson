@@ -23,7 +23,7 @@ Elapsed: 00:00:01.4505950
 
 ## Dependencies
 
-- Wkx - https://www.nuget.org/packages/Wkx/
+- GeoJSON.Net - https://www.nuget.org/packages/GeoJSON.Net/
 
 - XBim.Essentials - https://www.nuget.org/packages/Xbim.Essentials/
 

@@ -50,6 +50,15 @@ namespace ifc2geojson.tests
         [Test]
         public void GlobalXTest()
         {
+            var walls = model.FederatedInstances.OfType<IIfcWall>().ToList();
+            Assert.IsTrue(walls.Count == 1);
+            var wall = walls.FirstOrDefault();
+            Assert.IsTrue(wall.Name == "Basic Wall:Wall-Ext_102Bwk-75Ins-100LBlk-12P:285323");
+            Assert.IsTrue(wall.GlobalId == "3uPlCH7wP2fu4If6Q86Sno");
+
+            var windows = model.FederatedInstances.OfType<IIfcWindow>().ToList();
+            Assert.IsTrue(windows.Count == 2);
+
             var ifcProject = model.FederatedInstances.OfType<IfcProject>().FirstOrDefault();
             var site = ifcProject.Sites.FirstOrDefault();
             Assert.IsTrue(site.Name == "Default");

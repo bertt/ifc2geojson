@@ -11,7 +11,9 @@ namespace ifc2geojson.tests
         [SetUp]
         public void Setup()
         {
-            model = IfcStore.Open("AC20-FZK-Haus.ifc");
+            IfcStore.ModelProviderFactory.UseMemoryModelProvider();
+            model = IfcStore.Open("assets/AC20-FZK-Haus.ifc");
+            Assert.IsTrue(model.SchemaVersion == Xbim.Common.Step21.XbimSchemaVersion.Ifc4);
         }
 
         [Test]

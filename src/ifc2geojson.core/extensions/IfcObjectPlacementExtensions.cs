@@ -8,7 +8,7 @@ namespace ifc2geojson.core.extensions
     {
         public static Position ToAbsoluteLocation(this IIfcObjectPlacement objectPlacement, Position referencePoint, double LengthUnitPower)
         {
-            var relativeLocation = ((IIfcAxis2Placement3D)((IfcLocalPlacement)objectPlacement).RelativePlacement).Location;
+            var relativeLocation = ((IIfcAxis2Placement3D)((IIfcLocalPlacement)objectPlacement).RelativePlacement).Location;
             var (x,y) = LonLat.AddDelta((double)referencePoint.Longitude, (double)referencePoint.Latitude, relativeLocation.X * LengthUnitPower, relativeLocation.Y * LengthUnitPower);
             var point = new Position(y,x,referencePoint.Altitude + relativeLocation.Z);
             return point;

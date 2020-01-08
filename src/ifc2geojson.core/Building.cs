@@ -11,5 +11,7 @@ namespace ifc2geojson.core
 
         public Position Location { get; set; }
 
+        public BuildingAddress BuildingAdress { get; set; }
+
     }
 }

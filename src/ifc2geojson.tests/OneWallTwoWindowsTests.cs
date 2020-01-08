@@ -46,6 +46,14 @@ namespace ifc2geojson.tests
             Assert.IsTrue(!(bool)project.Walls[0].Properties["LoadBearing"]);
             Assert.IsTrue(project.Walls[0].ObjectType=="Basic Wall:Wall-Ext_102Bwk-75Ins-100LBlk-12P:45419");
             Assert.IsTrue(project.Walls[0].Properties.Count == 5);
+            Assert.IsTrue(project.Windows.Count == 2);
+            Assert.IsTrue(project.Windows[0].Properties.Count == 4);
+            Assert.IsTrue(project.Windows[0].Properties["Manufacturer"].ToString() == "Revit");
+            Assert.IsTrue((bool)project.Windows[0].Properties["IsExternal"]);
+            Assert.IsTrue(project.Windows[0].Properties["Reference"].ToString()== "910x910mm");
+            Assert.IsTrue(project.Windows[0].Properties["ThermalTransmittance"].ToString() == "5.5617");
+            Assert.IsTrue(project.Windows[0].Name == "Windows_Sgl_Plain:910x910mm:285546");
+
 
 
 

@@ -43,8 +43,26 @@ namespace ifc2geojson.core
             var walls = ParseWalls(ifcWalls);
             project.Walls = walls;
 
+            var ifcWindows = model.FederatedInstances.OfType<IIfcWindow>().ToList();
+            var windows = ParseWindows(ifcWindows);
+            project.Windows = windows;
+
             return project;
         }
+
+        private static List<Window> ParseWindows(List<IIfcWindow> ifcWindows)
+        {
+            var windows = new List<Window>();
+            foreach (var ifcWindow in ifcWindows)
+            {
+                var window = new Window();
+                ParseElement(window, ifcWindow);
+                window.Properties = GetPropertiesFromObject(ifcWindow);
+                windows.Add(window);
+            }
+            return windows;
+        }
+
 
         private static List<Wall> ParseWalls(List<IIfcWall> ifcWalls)
         {

@@ -10,5 +10,6 @@ namespace ifc2geojson.core
 
         public double LengthUnitPower { get; set; }
         public List<Wall> Walls { get; set; }
+        public List<Window> Windows { get; set; }
     }
 }
